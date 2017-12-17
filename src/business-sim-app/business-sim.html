@@ -39,6 +39,7 @@
     </div>
     <div class="tsec">
       <paper-button raised on-click="simulat">Run Simulation</paper-button>
+      <paper-button raised on-click="reset">Reset Everything!</paper-button>
     </div>
   </br>
     <h2>Week {{week}}'s Results</h2>
@@ -138,6 +139,23 @@
         this.iStock = parseInt(localStorage.getItem("iStock")) || 100;
         this.week = parseInt(localStorage.getItem("week")) || 0;
         this.results = localStorage.getItem("results") || {};
+      }
+      reset()
+      {
+        this.iMarkup = 10;
+        this.tPopulation =  250;
+        this.sPopularity =  1;
+        this.iCost = 50;
+        this.iStock = 100;
+        this.week =  0;
+        this.results = {};
+        localStorage.setItem("iMarkup", this.iMarkup);
+        localStorage.setItem("tPopulation", this.tPopulation);
+        localStorage.setItem("sPopularity", this.sPopularity);
+        localStorage.setItem("iCost", this.iCost);
+        localStorage.setItem("iStock", this.iStock);
+        localStorage.setItem("week", this.week);
+        localStorage.setItem("results", this.results);
       }
       simulat()
       {
