@@ -1,0 +1,237 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<dom-module id="business-sim">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      paper-slider {
+        width: 100%;
+        --paper-slider-input: {width: 100px}
+      }
+
+
+    </style>
+    <h2>BusinessSim</h2>
+    <div class="tsec">
+      <b>Town's Population</b>
+      <paper-input id="tPopulation" type="number" label="Town's Population" value="{{tPopulation}}"></paper-input>
+    </div>
+    <div class="tsec">
+      <b>Store's Popularity (%)</b>
+      <paper-slider id="sPopularity" label="Store's Popularity (%)" min=1 max=100 pin editable value="{{sPopularity}}"></paper-slider>
+    </div>
+    <div class="tsec">
+      <b>Max Number of Stock</b>
+      <paper-input id="iStock" type="number" value="{{iStock}}"label="Max Number of Stock"></paper-input>
+    </div>
+    <div class="tsec">
+      <b>Item's Cost</b>
+      <paper-input id="iCost" type="number" value="{{iCost}}" label="Base cost to the store per item"></paper-input>
+    </div>
+    <div class="tsec">
+      <b>Item's Markup (%)</b>
+      <paper-slider id="iMarkup" label="Item's Markup (%)" min=0 max=500 pin value="{{iMarkup}}" snaps step="10" editable></paper-slider>
+    </div>
+    <div class="tsec">
+      <paper-button raised on-click="simulat">Run Simulation</paper-button>
+    </div>
+  </br>
+    <h2>Week {{week}}'s Results</h2>
+    <div class="tsec">
+      <b>Shoppers Total: </b>
+      {{results.shoppers.total}}
+      </br>
+      <b>Stolen Goods: </b>
+      {{results.shoppers.actions.stolen}}
+      </br>
+      <b>Sold Goods: </b>
+      {{results.shoppers.actions.bought}}
+      </br>
+      <b>Shoppers That Wasted Your Time: </b>
+      {{results.shoppers.actions.looked}}
+      </br>
+    </div>
+  </br>
+    <div class="tsec">
+      <b>Store Cost: </b>
+      ${{results.store.cost}}
+      </br>
+      <b>Store Stolen: </b>
+      ${{results.store.stolen}}
+      </br>
+      <b>Store Net: </b>
+      ${{results.store.net}}
+      </br>
+      <b>Store Profit: </b>
+      ${{results.store.profit}}
+      </br>
+    </div>
+    <h2>The Rolls</h2>
+    <div class="tsec" style="white-space: pre-line;">
+
+      {{log}}
+    </div>
+
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class BusinessSim extends Polymer.Element {
+      static get is() { return 'business-sim'; }
+      static get properties() {
+        return {
+          iMarkup: {
+            type: Number,
+            value: 100
+          },
+          iCost: {
+            type: Number,
+            value: 1
+          },
+          iStock: {
+            type: Number,
+            value: 100
+          },
+          sPopularity: {
+            type: Number,
+            value: 1
+          },
+          tPopulation: {
+            type: Number,
+            value: 200
+          },
+          results:{
+            type: Object
+          },
+          diceRoller: {
+            value: new DiceRoller()
+          },
+          week: {
+            type: Number,
+            value: 0
+          },
+          log: {
+            type: String,
+            value: ""
+          }
+        };
+      }
+      constructor()
+      {
+        super();
+        this.iMarkup = parseInt(localStorage.getItem("iMarkup"));
+        this.tPopulation = parseInt(localStorage.getItem("tPopulation"));
+        this.sPopularity = parseInt(localStorage.getItem("sPopularity"));
+        this.iCost = parseInt(localStorage.getItem("iCost"));
+        this.iStock = parseInt(localStorage.getItem("iStock"));
+        this.week = parseInt(localStorage.getItem("week"));
+        this.results = localStorage.getItem("results");
+      }
+      simulat()
+      {
+        this.results = {
+          shoppers: {
+            total : 0,
+            roll : 0,
+            actions: {
+              stolen: 0,
+              bought: 0,
+              looked: 0
+            }
+          },
+          store:
+          {
+            cost: 0,
+            stolen: 0,
+            net: 0,
+            profit: 0
+          }
+        }
+
+
+        this.set("results.shoppers.roll", this.diceRoller.roll(this.tPopulation+'d100!'))
+        for (var i = 0; i < this.results.shoppers.roll.rolls[0].length; i++)
+        {
+          if(parseInt(this.results.shoppers.roll.rolls[0][i]) <= this.sPopularity)
+          {
+             this.set("results.shoppers.total", this.results.shoppers.total+1);
+          }
+        }
+
+        for (var i = 0; i < this.results.shoppers.total; i++)
+        {
+          if(this.iStock > 0)
+          {
+            var roll =  this.diceRoller.roll("1d20!").rolls[0];
+            for (var j = 0; j < roll.length; j++)
+            {
+              if(parseInt(roll[j]) == 1) // steals stock
+              {
+                this.iStock--;
+                this.set("results.shoppers.actions.stolen", this.results.shoppers.actions.stolen+1);
+                this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
+                this.set("results.store.stolen", parseInt(this.results.store.stolen)+parseInt(this.iCost));
+              }
+              else if(parseInt(roll[j]) > 10)
+              {
+                this.iStock--;
+                this.set("results.shoppers.actions.bought", this.results.shoppers.actions.bought+1);
+                this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
+                this.set("results.store.net", parseInt(this.results.store.net)+parseInt(this.iCost)+(parseInt(this.iCost)*(parseInt(this.iMarkup)/100)));
+              }
+              else
+              {
+                  this.set("results.shoppers.actions.looked", this.results.shoppers.actions.looked+1);
+              }
+            }
+          }
+        }
+        this.set("results.shoppers.store.profit", parseInt(this.results.store.net)-parseInt(this.results.store.cost));
+        this.week++;
+
+
+
+        this.log = "";
+
+        var tempLog = this.diceRoller.getLog();
+
+        for (var i = 0; i < tempLog.length; i++) {
+          this.log += tempLog[i]+"\n"
+        }
+        this.diceRoller.clearLog();
+
+
+        localStorage.setItem("iMarkup", this.iMarkup);
+        localStorage.setItem("tPopulation", this.tPopulation);
+        localStorage.setItem("sPopularity", this.sPopularity);
+        localStorage.setItem("iCost", this.iCost);
+        localStorage.setItem("iStock", this.iStock);
+        localStorage.setItem("week", this.week);
+        localStorage.setItem("results", this.results);
+
+        // for (var i = 0; i < this.tPopulation; i++)
+        // {
+        //   if(this.diceRoller.roll(this.tPopulation+'d100!').getTotal() <= this.sPopularity)
+        //   {
+        //     this.set("results.shoppers", this.results.shoppers+1);
+        //   }
+        // }
+
+
+
+
+      }
+    }
+
+    window.customElements.define(BusinessSim.is, BusinessSim);
+  </script>
+</dom-module>

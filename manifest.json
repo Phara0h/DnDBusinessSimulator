@@ -1,0 +1,6 @@
+{
+  "name": "business-sim",
+  "short_name": "business-sim",
+  "start_url": "/",
+  "display": "standalone"
+}
