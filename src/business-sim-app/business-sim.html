@@ -55,6 +55,9 @@
       <b>Shoppers That Wasted Your Time: </b>
       {{results.shoppers.actions.looked}}
       </br>
+      <b>Shoppers Turned Off by the Price: </b>
+      {{results.shoppers.actions.overpriced}}
+      </br>
     </div>
   </br>
     <div class="tsec">
@@ -145,7 +148,8 @@
             actions: {
               stolen: 0,
               bought: 0,
-              looked: 0
+              looked: 0,
+              overpriced: 0
             }
           },
           store:
@@ -183,10 +187,28 @@
               }
               else if(parseInt(roll[j]) > 10)
               {
-                this.iStock--;
-                this.set("results.shoppers.actions.bought", this.results.shoppers.actions.bought+1);
-                this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
-                this.set("results.store.net", parseInt(this.results.store.net)+parseInt(this.iCost)+(parseInt(this.iCost)*(parseInt(this.iMarkup)/100)));
+                if(this.iMarkup > 50)
+                {
+                  if(this.diceRoller.roll('1d'+Math.round(this.iMarkup/100)+1).getTotal() == 1)
+                  {
+                    this.iStock--;
+                    this.set("results.shoppers.actions.bought", this.results.shoppers.actions.bought+1);
+                    this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
+                    this.set("results.store.net", parseInt(this.results.store.net)+parseInt(this.iCost)+(parseInt(this.iCost)*(parseInt(this.iMarkup)/100)));
+                  }
+                  else
+                  {
+                    this.set("results.shoppers.actions.overpriced", this.results.shoppers.actions.overpriced+1);
+                  }
+                }
+                else
+                {
+                  this.iStock--;
+                  this.set("results.shoppers.actions.bought", this.results.shoppers.actions.bought+1);
+                  this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
+                  this.set("results.store.net", parseInt(this.results.store.net)+parseInt(this.iCost)+(parseInt(this.iCost)*(parseInt(this.iMarkup)/100)));
+                }
+
               }
               else
               {
