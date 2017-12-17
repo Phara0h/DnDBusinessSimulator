@@ -207,7 +207,7 @@
               {
                 if(this.iMarkup > 50)
                 {
-                  if(this.diceRoller.roll('1d'+Math.round(this.iMarkup/100)+1).getTotal() == 1)
+                  if(this.diceRoller.roll('1d'+(Math.round(this.iMarkup/100)+1)).getTotal() == 1)
                   {
                     this.iStock--;
                     this.set("results.shoppers.actions.bought", this.results.shoppers.actions.bought+1);
