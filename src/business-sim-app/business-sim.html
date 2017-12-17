@@ -188,7 +188,7 @@
         }
 
 
-        this.set("results.shoppers.roll", this.diceRoller.roll(this.tPopulation+'d100!'))
+        this.set("results.shoppers.roll", this.diceRoller.roll(this.tPopulation+'d'+(Math.round((Math.random()*3000)+6000))+'!'))
         for (var i = 0; i < this.results.shoppers.roll.rolls[0].length; i++)
         {
           if(parseInt(this.results.shoppers.roll.rolls[0][i]) <= this.sPopularity)
@@ -211,7 +211,7 @@
                 this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
                 this.set("results.store.stolen", parseInt(this.results.store.stolen)+parseInt(this.iCost));
               }
-              else if(parseInt(roll[j]) > 10)
+              else if(parseInt(roll[j]) > 15)
               {
                 if(this.iMarkup > 50)
                 {
