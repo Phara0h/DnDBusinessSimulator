@@ -128,13 +128,13 @@
       constructor()
       {
         super();
-        this.iMarkup = parseInt(localStorage.getItem("iMarkup"));
-        this.tPopulation = parseInt(localStorage.getItem("tPopulation"));
-        this.sPopularity = parseInt(localStorage.getItem("sPopularity"));
-        this.iCost = parseInt(localStorage.getItem("iCost"));
-        this.iStock = parseInt(localStorage.getItem("iStock"));
-        this.week = parseInt(localStorage.getItem("week"));
-        this.results = localStorage.getItem("results");
+        this.iMarkup = parseInt(localStorage.getItem("iMarkup")) || 10;
+        this.tPopulation = parseInt(localStorage.getItem("tPopulation")) || 250;
+        this.sPopularity = parseInt(localStorage.getItem("sPopularity")) || 1;
+        this.iCost = parseInt(localStorage.getItem("iCost")) || 50;
+        this.iStock = parseInt(localStorage.getItem("iStock")) || 100;
+        this.week = parseInt(localStorage.getItem("week")) || 0;
+        this.results = localStorage.getItem("results") || {};
       }
       simulat()
       {
