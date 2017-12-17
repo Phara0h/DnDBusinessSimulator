@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <dom-module id="business-sim">
   <template>
     <style>
@@ -40,6 +41,7 @@
     <div class="tsec">
       <paper-button raised on-click="simulat">Run Simulation</paper-button>
       <paper-button raised on-click="reset">Reset Everything!</paper-button>
+      <paper-checkbox checked="{{showLog}}">Show Roll Log (may be slow)</paper-checkbox>
     </div>
   </br>
     <h2>Week {{week}}'s Results</h2>
@@ -73,12 +75,14 @@
       </br>
       <b>Store Profit: </b>
       ${{results.store.profit}}
-      </br>
+
     </div>
     <h2>The Rolls</h2>
     <div class="tsec" style="white-space: pre-line;">
+      <template is="dom-if" if="{{showLog}}">
+        {{log}}
+      </template>
 
-      {{log}}
     </div>
 
 
@@ -126,6 +130,10 @@
           log: {
             type: String,
             value: ""
+          },
+          showLog: {
+            type: Boolean,
+            value: false
           }
         };
       }
@@ -239,14 +247,17 @@
         this.week++;
 
 
+        if(this.showLog)
+        {
+          this.log = "";
 
-        this.log = "";
+          var tempLog = this.diceRoller.getLog();
 
-        var tempLog = this.diceRoller.getLog();
-
-        for (var i = 0; i < tempLog.length; i++) {
-          this.log += tempLog[i]+"\n"
+          for (var i = 0; i < tempLog.length; i++) {
+            this.log += tempLog[i]+"\n"
+          }
         }
+
         this.diceRoller.clearLog();
 
 
