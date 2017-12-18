@@ -140,20 +140,20 @@
       constructor()
       {
         super();
-        this.iMarkup = parseInt(localStorage.getItem("iMarkup")) || 10;
-        this.tPopulation = parseInt(localStorage.getItem("tPopulation")) || 250;
-        this.sPopularity = parseInt(localStorage.getItem("sPopularity")) || 1;
-        this.iCost = parseInt(localStorage.getItem("iCost")) || 50;
+        this.iMarkup = parseInt(localStorage.getItem("iMarkup")) || 40;
+        this.tPopulation = parseInt(localStorage.getItem("tPopulation")) || 2500;
+        this.sPopularity = parseInt(localStorage.getItem("sPopularity")) || 20;
+        this.iCost = parseInt(localStorage.getItem("iCost")) || 25;
         this.iStock = parseInt(localStorage.getItem("iStock")) || 100;
         this.week = parseInt(localStorage.getItem("week")) || 0;
         this.results = localStorage.getItem("results") || {};
       }
       reset()
       {
-        this.iMarkup = 10;
-        this.tPopulation =  250;
-        this.sPopularity =  1;
-        this.iCost = 50;
+        this.iMarkup = 40;
+        this.tPopulation =  2500;
+        this.sPopularity =  20;
+        this.iCost = 25;
         this.iStock = 100;
         this.week =  0;
         this.results = {};
@@ -188,7 +188,7 @@
         }
 
 
-        this.set("results.shoppers.roll", this.diceRoller.roll(this.tPopulation+'d'+(Math.round((Math.random()*3000)+6000))+'!'))
+        this.set("results.shoppers.roll", this.diceRoller.roll(this.tPopulation+'d'+(Math.round((Math.random()*3000)+6000))))
         for (var i = 0; i < this.results.shoppers.roll.rolls[0].length; i++)
         {
           if(parseInt(this.results.shoppers.roll.rolls[0][i]) <= this.sPopularity)
@@ -211,7 +211,7 @@
                 this.set("results.store.cost", parseInt(this.results.store.cost)+parseInt(this.iCost));
                 this.set("results.store.stolen", parseInt(this.results.store.stolen)+parseInt(this.iCost));
               }
-              else if(parseInt(roll[j]) > 15)
+              else if(parseInt(roll[j]) > 10)
               {
                 if(this.iMarkup > 50)
                 {
